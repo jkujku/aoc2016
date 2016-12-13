@@ -963,22 +963,40 @@ var doit = function(input){
     var alph = function(str){ 
         return (str.split("[")[0]).replace(/[0-9-]/g, ""); 
     };
-    var sorty = function(arr){
-        return _.sortBy(_.groupBy(arr.sort(), function(a){
-            return a;
-        }), function(l){
-            return -l.length;
+    var arraysort = function(arr){
+        return _.sortBy(arr, function(a){
+           return a;  
         });
     };
-    var red = function(e){
-        return e[0][0]+e[1][0]+e[2][0]+e[3][0]+e[4][0];
+    var arraygroup = function(arr){
+        return _.map(_.groupBy(arr, function(a){
+           return a; 
+        }), function(gr){
+            return {letter:gr[0], count:gr.length};
+        });
+    };
+    var groupsort = function(arr){
+          return _.sortBy(arr, function(a){
+              return -a.count;
+          });
     };
     var hashy = function(str){ 
         return (str.split("[")[1]).replace("]", ""); 
     };  
+    var reduce = function(arr){
+        return _.reduce(arr, function(memo, a){
+           return memo += a.letter+a.count+" ";
+        }, "");
+    };
+    var shortend = function(line){
+        return (line.replace(/[0-9 ]/g, "")).substring(0,5);
+    };
     output = _.map(input, function(line){
        return {
-           letters : red(sorty(_.map(alph(line)))),
+           alpha : alph(line),
+           sorted : arraysort(_.map(alph(line))).join(""),
+           grouped : reduce(groupsort(arraygroup(arraysort(_.map(alph(line)))))),
+           letters : shortend(reduce(groupsort(arraygroup(arraysort(_.map(alph(line))))))),
            hash : hashy(line),
            num : parseInt(line.replace(/[a-z\]\[-]/g, ""),10),
            orig : line
