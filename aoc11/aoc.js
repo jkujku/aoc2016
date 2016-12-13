@@ -23,7 +23,7 @@ var delta = [
 ];
 var start = 11132323232;
 var finish = 44444444444; 
-var max = 30;
+var max = 50;
 
 var visited = [];
 
@@ -57,7 +57,7 @@ var getNexts = function(current){
            }
        } 
        if(dig(current, 0) > 1){
-           nextDown = current - d;
+           var nextDown = current - d;
            if(!isInvalid(nextDown)){
                nexts.push(nextDown);
            }
@@ -67,27 +67,29 @@ var getNexts = function(current){
 };
 
 var isInvalid = function(state){
-    var level = dig(state, 0);
-    var same = function(i){
-       return dig(state, i) == level;
-    };
+	for(var level=0; level <=4; level++){
+		
+		var same = function(i){
+		   return dig(state, i) == level;
+		};
 
-    if(same(1) 
-        && !same(2) 
-        && (same(4) || same(6) || same(8) || same(10))) return true;
-    if(same(3) 
-        && !same(4) 
-        && (same(2) || same(6) || same(8) || same(10))) return true;
-    if(same(5) 
-        && !same(6) 
-        && (same(4) || same(2) || same(8) || same(10))) return true;
-    if(same(7) 
-        && !same(8) 
-        && (same(4) || same(6) || same(2) || same(10))) return true;
-    if(same(9) 
-        && !same(10) 
-        && (same(4) || same(6) || same(8) || same(2))) return true;
-                                        
+		if(same(1) 
+			&& !same(2) 
+			&& (same(4) || same(6) || same(8) || same(10))) return true;
+		if(same(3) 
+			&& !same(4) 
+			&& (same(2) || same(6) || same(8) || same(10))) return true;
+		if(same(5) 
+			&& !same(6) 
+			&& (same(4) || same(2) || same(8) || same(10))) return true;
+		if(same(7) 
+			&& !same(8) 
+			&& (same(4) || same(6) || same(2) || same(10))) return true;
+		if(same(9) 
+			&& !same(10) 
+			&& (same(4) || same(6) || same(8) || same(2))) return true;
+
+	}
     return false;
 }
 
@@ -122,4 +124,4 @@ var doit = function(){
 	//console.log(visited);
 };
 
-//doit();
+doit();
