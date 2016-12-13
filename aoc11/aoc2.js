@@ -1,4 +1,4 @@
-var _ = require('underscore');
+//var _ = require('underscore');
 
 /*
 index:	0	1	2	3	4	5	6	7	8	9	10	11	12	13	14
@@ -76,7 +76,7 @@ var getNexts = function(current){
 };
 
 var isInvalid = function(state){
-	for(var level=0; level <=4; level++){
+	for(var level=0; level<=4; level++){
 		
 		var same = function(i){
 		   return dig(state, i) == level;
@@ -106,7 +106,34 @@ var isInvalid = function(state){
 
 	}
     return false;
-}
+};
+
+var wasVisitedBefore = function(state, count){
+	if(_.isUndefined(visited[state])){
+		return false;
+	}else{
+		if(visited[state] > count){
+			return false;
+		}
+	}
+	return true;
+};
+
+var markVisited = function(state, count){
+	visited[state] = count;
+};
+
+var hashState = function(state){
+	var elevator = dig(state, 0);
+	var pairs = [];
+	_.each(_.range(1,15,2), function(element){
+		pairs.push(dig(state,element)*10+dig(state,element+1));
+	});
+	pairs = _.sortBy(pairs, function(p){
+		return p;
+	});
+	return parseInt(("" + elevator + pairs.join("")),10);
+};
 
 var step = function(count, current){
     if(count == max){
@@ -117,20 +144,17 @@ var step = function(count, current){
         return;
     }
     
-	if(_.isUndefined(visited[current])){
-		visited[current] = count;
-	}else{
-		if(visited[current] > count){
-			visited[current] = count;
-		}else{
-			return;
-		}
-	}
+    var hash = hashState(current);
+    if(wasVisitedBefore(hash, count)){
+    	return;
+    }else{
+    	markVisited(hash, count);
+    }
     
     _.each(getNexts(current), function(next){
 		step(count+1, next);
     });
-}
+};
 
 var doit = function(){
 	createDeltas();
