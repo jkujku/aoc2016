@@ -951,15 +951,23 @@ a-b-c-d-e-f-g-h-987[abcde]
 not-a-real-room-404[oarel]
 totally-real-room-200[decoy]`.split("\n");
 
-var output, result;
+var output, result, lettermap;
 
 var init = function(){
     output = [];
     result = 0;
+    lettermap = "abcdefghijklmnopqrstuvwxyz";
+};
+
+var getLetter = function(index){
+  return lettermap.substring(index%26, (index+1)%26);
+};
+var getIndex = function(letter){
+  return lettermap.indexOf(letter);  
 };
 
 var doit = function(input){
-    init();
+    init();  
     var alph = function(str){ 
         return (str.split("[")[0]).replace(/[0-9-]/g, ""); 
     };
@@ -991,12 +999,18 @@ var doit = function(input){
     var shortend = function(line){
         return (line.replace(/[0-9 ]/g, "")).substring(0,5);
     };
+    var rotate = function(letter, num){
+        return getLetter(getIndex(letter)+num);
+    };
     output = _.map(input, function(line){
        return {
-           alpha : alph(line),
-           sorted : arraysort(_.map(alph(line))).join(""),
-           grouped : reduce(groupsort(arraygroup(arraysort(_.map(alph(line)))))),
+           //alpha : alph(line),
+           //sorted : arraysort(_.map(alph(line))).join(""),
+           //grouped : reduce(groupsort(arraygroup(arraysort(_.map(alph(line)))))),
            letters : shortend(reduce(groupsort(arraygroup(arraysort(_.map(alph(line))))))),
+           rotated : _.map(alph(line), function(l){
+                        return rotate(l, parseInt(line.replace(/[a-z\]\[-]/g, ""),10));
+                     }).join(""),
            hash : hashy(line),
            num : parseInt(line.replace(/[a-z\]\[-]/g, ""),10),
            orig : line
