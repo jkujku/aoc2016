@@ -165,7 +165,7 @@ var output, cmds;
 
 var init = function(){
     var str = "";
-    _.each(_.range(0,49), function(i){ str += "0"; });
+    _.each(_.range(0,50), function(i){ str += "0"; });
     output = [str,str,str,str,str,str];
     cmds = _.map(input, function(line){
        return getFunction(line); 
@@ -174,12 +174,12 @@ var init = function(){
 
 var getFunction = function(line){
     var parts = line.split(" ");
-    var x = parseInt(parts[1], 10);
-    var y = parseInt(parts[2], 10);
+    var a = parseInt(parts[1], 10);
+    var b = parseInt(parts[2], 10);
     switch(parts[0]){
-        case "rect": return function(){ rect(x,y); }; break;
-        case "column": return function(){ column(x,y); }; break;
-        case "row": return function(){ row(x,y); }; break;
+        case "rect": return function(){ rect(a,b); }; break;
+        case "column": return function(){ column(a,b); }; break;
+        case "row": return function(){ row(a,b); }; break;
     }
 }
 
@@ -196,7 +196,7 @@ var rect = function(x,y){
 
 var row = function(x,y){
     console.log("row",x,y);
-    output[x] = output[x].substring(49-y) + output[x].substring(0,49-y) ;
+    output[x] = output[x].substring(50-y) + output[x].substring(0,50-y) ;
 }
 
 var column = function(x,y){
