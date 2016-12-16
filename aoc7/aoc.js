@@ -2003,15 +2003,33 @@ var example = `abba[mnop]qrst
 abcd[bddb]xyyx
 aaaa[qwer]tyui
 ioxxoj[asdfgh]zxcvbn`.split("\n");
+var example2 = `aba[bab]xyz
+xyx[xyx]xyx
+aaa[kek]eke
+zazbz[bzb]cdb`.split("\n");
 var alphabet = "abcdefghijklmnopqrstuvwxyz";
 var output = [];
 var abbacodes = [];
+var abababcodes = [];
 
 var createAbbaCodes = function(){
     _.each(_.range(0,26), function(a){
        _.each(_.range(0,26), function(b){
            if(a != b){
                abbacodes.push(alphabet[a]+alphabet[b]+alphabet[b]+alphabet[a]);
+           }
+       });
+    });
+};
+
+var createAbaBabCodes = function(){
+    _.each(_.range(0,26), function(a){
+       _.each(_.range(0,26), function(b){
+           if(a != b){
+               abababcodes.push({
+                    aba : (alphabet[a]+alphabet[b]+alphabet[a]),
+                    bab : (alphabet[b]+alphabet[a]+alphabet[b])
+               });
            }
        });
     });
@@ -2033,9 +2051,43 @@ var gr = function(arr){
 var cnt = function(a,b){
     return (a.indexOf(b) >= 0);
 };
+
+var isTLS = function(o){
+    var matchIp = false;
+    _.each(o.grouped.ip, function(ip){
+        _.each(abbacodes, function(abba){
+            matchIp |= cnt(ip, abba);    
+        });
+    });
+    var matchHyper = false;
+    _.each(o.grouped.hyper, function(hyper){
+        _.each(abbacodes, function(abba){
+            matchHyper |= cnt(hyper, abba);    
+        });
+    });
+    return matchIp && !matchHyper;
+};
+
+var isSSL = function(o){
+    var success = false;
+    _.each(abababcodes, function(ababab){
+        var matchIp = false;
+        var matchHyper = false;
+        _.each(o.grouped.ip, function(ip){
+            //console.log(ip, ababab.aba)
+            matchIp |= cnt(ip, ababab.aba);    
+        });
+        _.each(o.grouped.hyper, function(hyper){
+            matchHyper |= cnt(hyper, ababab.bab);    
+        });
+        success |= (matchIp && matchHyper);
+    });
+    return success;
+};
+
 var doit = function(input){
     createAbbaCodes();
-    // console.log(abbacodes.join("\n"));
+    createAbaBabCodes();
     output = _.map(input, function(line){
         return {
             original : line,
@@ -2047,21 +2099,7 @@ var doit = function(input){
         };
     });
     output = _.filter(output, function(o){
-        var matchIp = false;
-        _.each(o.grouped.ip, function(ip){
-            console.log(ip);
-			_.each(abbacodes, function(abba){
-                matchIp |= cnt(ip, abba);    
-            });
-        });
-        var matchHyper = false;
-        _.each(o.grouped.hyper, function(hyper){
-            console.log(hyper);
-			_.each(abbacodes, function(abba){
-                matchHyper |= cnt(hyper, abba);    
-            });
-        });
-        return matchIp && !matchHyper;
+        return isSSL(o);
     });
     _.each(output, function(o){
         console.log(o.print());
