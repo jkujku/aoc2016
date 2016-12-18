@@ -1,3 +1,5 @@
+var _ = require("underscore");
+
 var input = `cpy 1 a
 cpy 1 b
 cpy 26 d
@@ -30,7 +32,7 @@ jnz a 2
 dec a`.split("\n");
 
 var istr = [];
-var rgs = {a:0, b:0, c:0, d:0};
+var rgs = {a:0, b:0, c:1, d:0};
 var result = 0;
 var nextcmd = 0;
 
