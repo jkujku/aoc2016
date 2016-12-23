@@ -1,7 +1,6 @@
-var _ = require("underscore");
+//var _ = require("underscore");
 
-var number = 3014603;
-//var number = 5;
+//var number = 3014603;
 var elves = [];
 
 var part1 = function(number){
@@ -24,36 +23,45 @@ var next = function(i){
 	return i;
 }
 
-var init = function(){
-	for(var e=0; e<number; e++){
+var init = function(n){
+	elves = [];
+	for(var e=0; e<n; e++){
 		elves.push(e+1);
 	}
 };
 
-var kill = function(index){
-	var half = Math.floor(elves.length/2);
-	var killposition = (half + index) % elves.length;
-	//console.log("kill", elves.length, killposition, "|", elves[index], "kills", elves[killposition]);
-	elves[killposition] = undefined;
-	elves = _.filter(elves, function(e){
-		return !_.isUndefined(e);
-	});
+var remove = function(arr, index){
+	return arr.slice(0, index).concat(arr.slice(index+1));
 };
 
-var part2 = function(input){
-	var maxsteps = 0;
+var getHalf = function(x){
+	return 	Math.floor(elves.length/2);
+};
+
+var kill = function(index){
+	var half = getHalf(index);
+	var killposition = (half + index) % elves.length;
+	//console.log(elves[index], "kills", elves[killposition]);
+	elves = remove(elves, killposition);
+	return index >= killposition ? index : index+1;
+};
+
+var part2 = function(n){
+	var maxsteps = 1000;
+	var steps = 0;
 	var elf = -1;
+	
 	while(elves.length > 1){
-		maxsteps++;
-		elf++;
+		steps++;
 		elf = next(elf);
-		//console.log("step", maxsteps, elves.length, elf);
-		kill(elf);
-		//console.log("step", maxsteps, elves.length, elf);
+		//console.log("step:", steps, "elves.length:", elves.length, "elf's index:", elf, "elf's name:", elves[elf]);
+		elf = kill(elf) % elves.length;
 		//console.log("\n");
 	}
-	console.log(elves);
+	console.log(n, " ", elves[next(elf)]);
 };
 
-init();
-part2(number);
+_.each(_.range(5,1000), function(n){
+	init(n);
+	part2(n);
+});
